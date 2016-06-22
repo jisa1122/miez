@@ -7,5 +7,5 @@ module.exports.init = function(app) {
   app.use('/auth', require(routesPath + '/authentication'));
   app.use('/', require(routesPath + '/account'));
   app.use('/', require(routesPath + '/users'));
-  app.use('/', require(routesPath + '/contacts'));
+  app.use('/', require(routesPath + '/products'));
 };
