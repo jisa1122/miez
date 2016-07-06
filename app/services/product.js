@@ -10,18 +10,20 @@ class ProductService {
     this.Product = Product;
   }
 
-/*
-  productService.addProduct({...}, (err, product) => {
+  // create(data, callback) {
+  //   Product.create(data, callback);
+  // }
 
-});
-*/
 
   create(data, callback) {
-    this.Product.create(data, callback);
-  }
+    let product = new Product(data);
 
-  addProduct(data, callback) {
-    Product.create(data, callback);
+    product.save(function(err, newProduct) {
+      if (err) {
+        return callback(err);
+      }
+      callback(null, newProduct);
+    })
   }
 
   updateProduct(sku, data, callback) {
@@ -51,7 +53,7 @@ class ProductService {
           return callback(err);
         }
 
-        callback(null, updateProduct);
+        callback(null, updatedProduct);
       });
     });
   }
@@ -97,7 +99,7 @@ class ProductService {
         if (err) {
           return next(err);
         }
-        callback('Product with sku: ' + sku + ' was deleted!')
+        callback(null, 'Product with sku: ' + sku + ' was deleted!')
       });
     });
   }

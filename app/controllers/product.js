@@ -5,22 +5,23 @@
  */
 const _ = require('lodash');
 const mongoose = require('mongoose');
-const Product = mongoose.model('Product');
+const ProductService = require('../services/product');
+const productService = new ProductService();
 const ObjectId = mongoose.Types.ObjectId;
 
 /**
  *  Module exports
  */
-module.exports.addOne = addProduct;
+module.exports.create = create;
 
-function addProduct(req, res, next) {
-  Product.create(req.body, (err, updatedProduct) => {
+function create(req, res, next) {
+  var data = req.body;
+  productService.create(data, (err, product) => {
     if (err) {
       return next(err);
     }
 
-    req.resources.product = updatedProduct;
-    next();
+    res.status(201).json(product)
   });
 };
 
@@ -31,20 +32,13 @@ module.exports.delete = deleteProduct;
 //
 
 function findProductById(req, res, next) {
-  if (!ObjectId.isValid(req.params.productId)) {
-    return res.status(404).json({ message: '404 not found.'});
-  }
 
-  Product.findById(req.params.productId, (err, product) => {
-    console.log(err);
+  productService.findProductBySku(req.params.productId, (err, product) => {
     if (err) {
-      next(err);
-    } else if (product) {
-      req.resources.product = product;
-      next();
-    } else {
-      next(new Error('failed to find Product'));
+      return next(err);
     }
+
+    res.status(200).json(product)
   });
 };
 
@@ -61,8 +55,8 @@ function getAllProducts(req, res, next) {
 
 function updateProduct(req, res, next) {
   let product = req.resources.product;
-  _.assign(product, req.body);
-
+  _.merge(product, req.body); // used with patch. calls --> it merges data on destination if on data we have object properties with less properties than the destination product
+  // _.assign(product, req.body);   // overwrites destination product with source data
   product.save((err, updatedProduct) => {
     if (err) {
       return next(err);

@@ -8,4 +8,5 @@ module.exports.init = function(app) {
   app.use('/', require(routesPath + '/account'));
   app.use('/', require(routesPath + '/users'));
   app.use('/', require(routesPath + '/products'));
+  app.use('/api', require(routesPath + '/products'));
 };
